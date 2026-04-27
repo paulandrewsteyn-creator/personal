@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poker Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --felt: #0e2a1f;
+    --felt-deep: #081912;
+    --felt-light: #143d2e;
+    --gold: #d4a548;
+    --gold-bright: #f0c668;
+    --cream: #f4ead5;
+    --bone: #e8dcc0;
+    --red: #a8203c;
+    --black: #0a0a0a;
+    --shadow: rgba(0,0,0,0.5);
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Cormorant Garamond’, serif;
+background: var(–felt-deep);
+background-image:
+radial-gradient(ellipse at top, var(–felt-light) 0%, var(–felt) 35%, var(–felt-deep) 100%),
+url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘2’/%3E%3CfeColorMatrix values=‘0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’/%3E%3C/svg%3E”);
+background-attachment: fixed;
+color: var(–cream);
+min-height: 100vh;
+padding: 20px 16px 60px;
+line-height: 1.5;
+}
+
+.container {
+max-width: 720px;
+margin: 0 auto;
+}
+
+/* Header */
+.header {
+text-align: center;
+padding: 28px 16px 36px;
+position: relative;
+}
+
+.header::before, .header::after {
+content: ‘♠’;
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+color: var(–gold);
+font-size: 14px;
+opacity: 0.6;
+}
+.header::before { left: 10%; }
+.header::after { right: 10%; content: ‘♣’; }
+
+.eyebrow {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.3em;
+color: var(–gold);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+
+h1 {
+font-family: ‘Cormorant Garamond’, serif;
+font-weight: 600;
+font-style: italic;
+font-size: clamp(38px, 9vw, 56px);
+color: var(–cream);
+line-height: 1;
+letter-spacing: -0.01em;
+}
+
+.header-rule {
+width: 60px;
+height: 1px;
+background: var(–gold);
+margin: 16px auto 0;
+opacity: 0.5;
+}
+
+/* Cards / Sections */
+.card {
+background: linear-gradient(180deg, rgba(20, 61, 46, 0.4), rgba(8, 25, 18, 0.4));
+border: 1px solid rgba(212, 165, 72, 0.15);
+border-radius: 4px;
+padding: 22px 20px;
+margin-bottom: 18px;
+backdrop-filter: blur(8px);
+box-shadow: 0 8px 24px var(–shadow), inset 0 1px 0 rgba(244, 234, 213, 0.04);
+}
+
+.section-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.25em;
+color: var(–gold);
+text-transform: uppercase;
+margin-bottom: 14px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.section-label::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: linear-gradient(90deg, rgba(212, 165, 72, 0.3), transparent);
+}
+
+/* Form fields */
+.field-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-bottom: 14px;
+}
+
+.field {
+display: flex;
+flex-direction: column;
+}
+
+.field-full {
+grid-column: 1 / -1;
+}
+
+label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.15em;
+color: var(–bone);
+opacity: 0.7;
+text-transform: uppercase;
+margin-bottom: 6px;
+}
+
+input[type=“text”], input[type=“number”] {
+background: rgba(8, 25, 18, 0.6);
+border: 1px solid rgba(212, 165, 72, 0.2);
+color: var(–cream);
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+padding: 10px 12px;
+border-radius: 3px;
+transition: border-color 0.2s, background 0.2s;
+-webkit-appearance: none;
+appearance: none;
+}
+
+input[type=“number”] {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 15px;
+font-weight: 500;
+}
+
+input:focus {
+outline: none;
+border-color: var(–gold);
+background: rgba(8, 25, 18, 0.85);
+}
+
+/* Buttons */
+button {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+-webkit-tap-highlight-color: transparent;
+}
+
+.btn-primary {
+background: var(–gold);
+color: var(–felt-deep);
+padding: 14px 20px;
+border-radius: 3px;
+font-weight: 700;
+width: 100%;
+box-shadow: 0 4px 12px rgba(212, 165, 72, 0.25);
+}
+
+.btn-primary:active {
+transform: translateY(1px);
+box-shadow: 0 2px 6px rgba(212, 165, 72, 0.2);
+}
+
+.btn-ghost {
+background: transparent;
+color: var(–gold);
+border: 1px solid rgba(212, 165, 72, 0.4);
+padding: 10px 14px;
+border-radius: 3px;
+}
+
+.btn-ghost:active {
+background: rgba(212, 165, 72, 0.1);
+}
+
+.btn-danger {
+background: transparent;
+color: var(–red);
+padding: 6px 8px;
+font-size: 16px;
+line-height: 1;
+}
+
+/* Player rows */
+.player-row {
+display: grid;
+grid-template-columns: 1.5fr 1fr 1fr auto;
+gap: 8px;
+align-items: end;
+padding: 12px 0;
+border-bottom: 1px solid rgba(212, 165, 72, 0.08);
+}
+
+.player-row:last-of-type {
+border-bottom: none;
+}
+
+.player-row label {
+margin-bottom: 4px;
+}
+
+.player-row input {
+padding: 8px 10px;
+font-size: 15px;
+}
+
+.add-player-btn {
+margin-top: 14px;
+background: transparent;
+color: var(–cream);
+border: 1px dashed rgba(212, 165, 72, 0.3);
+padding: 12px;
+width: 100%;
+border-radius: 3px;
+}
+
+.add-player-btn:active {
+border-color: var(–gold);
+color: var(–gold);
+}
+
+/* Summary stats */
+.stats {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 10px;
+margin-top: 16px;
+}
+
+.stat {
+text-align: center;
+padding: 14px 8px;
+background: rgba(8, 25, 18, 0.5);
+border: 1px solid rgba(212, 165, 72, 0.1);
+border-radius: 3px;
+}
+
+.stat-value {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 26px;
+font-weight: 600;
+color: var(–gold-bright);
+line-height: 1;
+margin-bottom: 4px;
+}
+
+.stat-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.2em;
+color: var(–bone);
+opacity: 0.6;
+text-transform: uppercase;
+}
+
+/* Results */
+.results {
+margin-top: 20px;
+}
+
+.result-row {
+display: grid;
+grid-template-columns: 32px 1fr auto auto;
+gap: 12px;
+align-items: center;
+padding: 14px 4px;
+border-bottom: 1px solid rgba(212, 165, 72, 0.1);
+}
+
+.result-row:last-child {
+border-bottom: none;
+}
+
+.rank {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 22px;
+color: var(–gold);
+text-align: center;
+}
+
+.rank.first { color: var(–gold-bright); font-size: 26px; }
+
+.player-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 20px;
+color: var(–cream);
+font-weight: 500;
+}
+
+.player-meta {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+color: var(–bone);
+opacity: 0.55;
+margin-top: 2px;
+letter-spacing: 0.05em;
+}
+
+.payout {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 15px;
+font-weight: 700;
+color: var(–cream);
+text-align: right;
+min-width: 70px;
+}
+
+.delta {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+text-align: right;
+min-width: 56px;
+}
+
+.delta.win { color: #6abf7e; }
+.delta.loss { color: var(–red); }
+
+/* Currency prefix */
+.currency-input {
+position: relative;
+}
+
+.currency-input::before {
+content: attr(data-symbol);
+position: absolute;
+left: 12px;
+top: 50%;
+transform: translateY(-50%);
+color: var(–bone);
+opacity: 0.5;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13px;
+pointer-events: none;
+z-index: 1;
+}
+
+.currency-input input {
+padding-left: 28px;
+}
+
+/* Hidden state */
+.hidden { display: none; }
+
+.empty {
+text-align: center;
+padding: 24px 16px;
+color: var(–bone);
+opacity: 0.4;
+font-style: italic;
+font-size: 16px;
+}
+
+/* Reset link */
+.reset-link {
+text-align: center;
+margin-top: 24px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.15em;
+color: var(–bone);
+opacity: 0.4;
+cursor: pointer;
+text-transform: uppercase;
+}
+
+.reset-link:active { color: var(–red); opacity: 0.8; }
+
+/* Animations */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(8px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.card { animation: fadeIn 0.4s ease-out backwards; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+
+@media (max-width: 480px) {
+.player-row {
+grid-template-columns: 1fr 1fr auto;
+gap: 8px;
+}
+.player-row .player-name-field {
+grid-column: 1 / -1;
+}
+.field-row {
+grid-template-columns: 1fr;
+}
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="eyebrow">House Rules</div>
+    <h1>Poker Night</h1>
+    <div class="header-rule"></div>
+  </header>
+
+  <!-- SETUP -->
+
+  <section class="card">
+    <div class="section-label">The Setup</div>
+
+```
+<div class="field-row">
+  <div class="field">
+    <label>Currency</label>
+    <input type="text" id="currency" value="R" maxlength="3">
+  </div>
+  <div class="field">
+    <label>Buy-in</label>
+    <div class="currency-input" id="buyinWrap" data-symbol="R">
+      <input type="number" id="buyin" value="200" min="0" step="1">
+    </div>
+  </div>
+</div>
+
+<div class="field-row">
+  <div class="field field-full">
+    <label>Chips per Buy-in</label>
+    <input type="number" id="chips" value="1000" min="1" step="100">
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- PLAYERS -->
+
+  <section class="card">
+    <div class="section-label">At the Table</div>
+    <div id="players"></div>
+    <button class="add-player-btn" id="addPlayer">+ Add Player</button>
+
+```
+<div class="stats">
+  <div class="stat">
+    <div class="stat-value" id="statPlayers">0</div>
+    <div class="stat-label">Players</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="statPot">0</div>
+    <div class="stat-label">Pot</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="statChips">0</div>
+    <div class="stat-label">Chips Out</div>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- PAYOUT -->
+
+  <section class="card">
+    <div class="section-label">The Reckoning</div>
+    <button class="btn-primary" id="calcBtn">Settle the Pot</button>
+    <div class="results" id="results"></div>
+  </section>
+
+  <div class="reset-link" id="reset">Clear everything</div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'pokerNight';
+
+  let state = {
+    currency: 'R',
+    buyin: 200,
+    chips: 1000,
+    players: []
+  };
+
+  // Safe storage wrapper - works inside Claude (window.storage), in browsers (localStorage), or in-memory
+  const hasClaudeStorage = typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+  const hasLocalStorage = (() => {
+    try {
+      const k = '__test__';
+      window.localStorage.setItem(k, '1');
+      window.localStorage.removeItem(k);
+      return true;
+    } catch (e) { return false; }
+  })();
+
+  async function loadState() {
+    try {
+      if (hasClaudeStorage) {
+        const result = await window.storage.get(STORAGE_KEY);
+        if (result && result.value) state = JSON.parse(result.value);
+      } else if (hasLocalStorage) {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (raw) state = JSON.parse(raw);
+      }
+    } catch (e) { /* use defaults */ }
+    if (!state.players || state.players.length === 0) {
+      state.players = [makePlayer(), makePlayer()];
+    }
+  }
+
+  async function saveState() {
+    try {
+      if (hasClaudeStorage) {
+        await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+      } else if (hasLocalStorage) {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+    } catch (e) { /* in-memory only */ }
+  }
+
+  async function clearStorage() {
+    try {
+      if (hasClaudeStorage) await window.storage.delete(STORAGE_KEY);
+      else if (hasLocalStorage) window.localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+  }
+
+  function makePlayer() {
+    return {
+      id: Math.random().toString(36).slice(2, 9),
+      name: '',
+      buyins: 1,
+      finalChips: 0
+    };
+  }
+
+  // Render
+  function renderPlayers() {
+    const wrap = document.getElementById('players');
+    if (state.players.length === 0) {
+      wrap.innerHTML = '<div class="empty">No players yet</div>';
+      return;
+    }
+
+    wrap.innerHTML = state.players.map((p, i) => `
+      <div class="player-row" data-id="${p.id}">
+        <div class="field player-name-field">
+          ${i === 0 ? '<label>Name</label>' : ''}
+          <input type="text" class="p-name" value="${escapeHtml(p.name)}" placeholder="Player ${i + 1}">
+        </div>
+        <div class="field">
+          ${i === 0 ? '<label>Buy-ins</label>' : ''}
+          <input type="number" class="p-buyins" value="${p.buyins}" min="0" step="1">
+        </div>
+        <div class="field">
+          ${i === 0 ? '<label>Final Chips</label>' : ''}
+          <input type="number" class="p-chips" value="${p.finalChips}" min="0" step="1">
+        </div>
+        <button class="btn-danger remove" aria-label="Remove">×</button>
+      </div>
+    `).join('');
+
+    // Wire up
+    wrap.querySelectorAll('.player-row').forEach(row => {
+      const id = row.dataset.id;
+      row.querySelector('.p-name').addEventListener('input', e => updatePlayer(id, 'name', e.target.value));
+      row.querySelector('.p-buyins').addEventListener('input', e => updatePlayer(id, 'buyins', parseInt(e.target.value) || 0));
+      row.querySelector('.p-chips').addEventListener('input', e => updatePlayer(id, 'finalChips', parseInt(e.target.value) || 0));
+      row.querySelector('.remove').addEventListener('click', () => removePlayer(id));
+    });
+
+    updateStats();
+  }
+
+  function updatePlayer(id, field, value) {
+    const p = state.players.find(x => x.id === id);
+    if (p) {
+      p[field] = value;
+      saveState();
+      updateStats();
+    }
+  }
+
+  function removePlayer(id) {
+    state.players = state.players.filter(p => p.id !== id);
+    saveState();
+    renderPlayers();
+  }
+
+  function updateStats() {
+    const totalBuyins = state.players.reduce((s, p) => s + (p.buyins || 0), 0);
+    const totalChips = state.players.reduce((s, p) => s + (p.finalChips || 0), 0);
+    const pot = totalBuyins * state.buyin;
+
+    document.getElementById('statPlayers').textContent = state.players.length;
+    document.getElementById('statPot').textContent = state.currency + pot.toLocaleString();
+    document.getElementById('statChips').textContent = totalChips.toLocaleString();
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+  }
+
+  // Calculate payouts
+  function calculate() {
+    const results = document.getElementById('results');
+    const players = state.players.filter(p => p.buyins > 0);
+
+    if (players.length === 0) {
+      results.innerHTML = '<div class="empty">Add some players first</div>';
+      return;
+    }
+
+    const totalChips = players.reduce((s, p) => s + (p.finalChips || 0), 0);
+    const totalPot = players.reduce((s, p) => s + p.buyins * state.buyin, 0);
+
+    if (totalChips === 0) {
+      results.innerHTML = '<div class="empty">Enter final chip counts to settle the pot</div>';
+      return;
+    }
+
+    // Proportional payout
+    const ranked = players.map(p => {
+      const paidIn = p.buyins * state.buyin;
+      const share = (p.finalChips || 0) / totalChips;
+      const payout = share * totalPot;
+      const net = payout - paidIn;
+      return {
+        name: p.name || 'Unnamed',
+        chips: p.finalChips || 0,
+        buyins: p.buyins,
+        paidIn,
+        payout,
+        net,
+        share
+      };
+    }).sort((a, b) => b.payout - a.payout);
+
+    results.innerHTML = ranked.map((r, i) => {
+      const rankSymbol = i === 0 ? '★' : (i + 1);
+      const netStr = r.net >= 0 ? '+' + r.net.toFixed(2) : r.net.toFixed(2);
+      const netClass = r.net > 0 ? 'win' : (r.net < 0 ? 'loss' : '');
+      return `
+        <div class="result-row">
+          <div class="rank ${i === 0 ? 'first' : ''}">${rankSymbol}</div>
+          <div>
+            <div class="player-name">${escapeHtml(r.name)}</div>
+            <div class="player-meta">${r.chips.toLocaleString()} chips · ${(r.share * 100).toFixed(1)}%</div>
+          </div>
+          <div class="payout">${state.currency}${r.payout.toFixed(2)}</div>
+          <div class="delta ${netClass}">${state.currency}${netStr}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Event wiring
+  document.getElementById('addPlayer').addEventListener('click', () => {
+    state.players.push(makePlayer());
+    saveState();
+    renderPlayers();
+  });
+
+  document.getElementById('calcBtn').addEventListener('click', calculate);
+
+  document.getElementById('currency').addEventListener('input', e => {
+    state.currency = e.target.value || 'R';
+    document.getElementById('buyinWrap').setAttribute('data-symbol', state.currency);
+    saveState();
+    updateStats();
+  });
+
+  document.getElementById('buyin').addEventListener('input', e => {
+    state.buyin = parseFloat(e.target.value) || 0;
+    saveState();
+    updateStats();
+  });
+
+  document.getElementById('chips').addEventListener('input', e => {
+    state.chips = parseInt(e.target.value) || 0;
+    saveState();
+  });
+
+  document.getElementById('reset').addEventListener('click', async () => {
+    if (confirm('Clear all players and settings?')) {
+      state = { currency: 'R', buyin: 200, chips: 1000, players: [makePlayer(), makePlayer()] };
+      await clearStorage();
+      hydrateInputs();
+      renderPlayers();
+      document.getElementById('results').innerHTML = '';
+    }
+  });
+
+  function hydrateInputs() {
+    document.getElementById('currency').value = state.currency;
+    document.getElementById('buyin').value = state.buyin;
+    document.getElementById('chips').value = state.chips;
+    document.getElementById('buyinWrap').setAttribute('data-symbol', state.currency);
+  }
+
+  // Init
+  (async () => {
+    await loadState();
+    hydrateInputs();
+    renderPlayers();
+  })();
+</script>
+
+</body>
+</html>
